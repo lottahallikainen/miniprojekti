@@ -1,6 +1,8 @@
 # miniprojekti - Lotta Huhta
 Haaga-helian palvelinten hallinnan kurssin miniprojekti
 
+Lisenssi: GPL3.0
+
 Projektin tarkoituksena on luoda sisäverkon käyttäjille tiedostojen jako palvelin, sekä windowsin active directory-toimintoja vastaava palvelin linux ymppäristöön,
 jolla mahdollistetaan domain-käyttäjien käyttö sekä domain-nimen käyttö.
 
