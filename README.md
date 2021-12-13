@@ -104,7 +104,7 @@ conf_samba:
       - file: /etc/samba/smb.conf
 ```
 
-Ehto palomuurikomentoon on saatu tarkastelemalla tiedostoja user.rules ja user6.rules joihin komento ”sudo ufw allow samba” tekee muutoksia:
+Ehto palomuurikomentoon on saatu tarkastelemalla tiedostoja user.rules ja user6.rules joihin komento ``sudo ufw allow samba`` tekee muutoksia:
 
 
 ![kuva](https://user-images.githubusercontent.com/82219338/145058612-5240a2e3-506d-4e9e-92de-de8e3f9315ce.png)
@@ -184,19 +184,19 @@ Salt dokumentaatio
 Tein tilatiedoston nimeltä sambaadc.sls:
 
 ```
-#Vaihdetaan palvelin koneen nimeksi DC1
+#Vaihdetaan palvelin koneen nimeksi dc1
 change_to_dc1:
   cmd.run:
     - name: sudo hostnamectl set-hostname dc1
     - unless:
-      - hostname | grep ’dc1’
+      - hostname | grep 'dc1'
 
 #Asetetaan kiinteät IP-asetukset koneelle
 /etc/network/interfaces:
   file.managed:
     - source: salt://samba/interfaces
 
- #Valmistellaan resolv.conf tiedosto
+#Valmistellaan resolv.conf tiedosto
 /etc/resolv.conf:
   file.managed:
     - source: salt://samba/resolv.conf
@@ -207,35 +207,35 @@ change_to_dc1:
   file.managed:
     - source: salt://samba/NetworkManager.conf
 
-#Varmistetaan ettei sambapalvelut ole päällä
+#Varmistetaan ettei sambapalvelut ole päällä, unless-ehdon HUHTAKOTI.LAN ja huhtakoti.lan syytä muuttaa omaan ympäristöön sopivaksi
 disable_samba_services:
   service.dead:
     - enable: False
-    - names:
+    - services:
       - samba-ad-dc
       - smbd
       - nmbd
       - winbind
     - unless:
-      - cat /etc/samba/smb.conf | grep ’rfc2307’
-      - cat /etc/krb5.conf | grep ’HUHTAKOTI.LAN’
-      - cat /etc/krb5.conf | grep ’huhtakoti.lan’
+      - cat /etc/samba/smb.conf | grep 'rfc2307'
+      - cat /etc/krb5.conf | grep 'HUHTAKOTI.LAN'
+      - cat /etc/krb5.conf | grep 'huhtakoti.lan'
 
 #Varmistetaan että oikeat hostit näkyy
 /etc/hosts:
   file.managed:
     - source: salt://samba/hosts
 
-#Varmistetaan ettei koneella ole samban tai kerberoksen konfiguorointitiedostoja
+#Varmistetaan ettei koneella ole samban tai kerberoksen konfiguorointitiedostoja, unless-ehdon HUHTAKOTI.LAN ja huhtakoti.lan syytä muuttaa omaan ympäristöön sopivaksi
 remove_confs:
   file.absent:
     - names:
       - /etc/samba/smb.conf
       - /etc/krb5.conf
     - unless:
-      - cat /etc/samba/smb.conf | grep ’rfc2307’
-      - cat /etc/krb5.conf | grep ’HUHTAKOTI.LAN’
-      - cat /etc/krb5.conf | grep ’huhtakoti.lan’
+      - cat /etc/samba/smb.conf | grep 'rfc2307'
+      - cat /etc/krb5.conf | grep 'HUHTAKOTI.LAN'
+      - cat /etc/krb5.conf | grep 'huhtakoti.lan'
 
 
 #Asennetaan tarpeelliset ohjelmat
@@ -249,25 +249,23 @@ install_softwares:
       - libpam-winbind
       - libnss-winbind
 
-#Poistetaan samban konfiguraatiotiedosto, jotta seuraava tila voi onnistua
+#Poistetaan samban konfiguraatioteidosto, jotta seuraava tila voi onnistua, unless-ehdon HUHTAKOTI.LAN ja huhtakoti.lan syytä muuttaa omaan ympäristöön sopivaksi
 remove_smb.conf:
   file.absent:
     - name: /etc/samba/smb.conf
     - unless:
-      - cat /etc/samba/smb.conf | grep ’rfc2307’
-      - cat /etc/krb5.conf | grep ’HUHTAKOTI.LAN’
-      - cat /etc/krb5.conf | grep ’huhtakoti.lan’
+      - cat /etc/samba/smb.conf | grep 'rfc2307'
+      - cat /etc/krb5.conf | grep 'HUHTAKOTI.LAN'
+      - cat /etc/krb5.conf | grep 'huhtakoti.lan'
 
-
-#Ajetaan asennuskomento samballe
+#Ajetaan asennuskomento samballe, unless-ehdon HUHTAKOTI.LAN ja huhtakoti.lan syytä muuttaa omaan ympäristöön sopivaksi, Myös suoritettavan komennon realm, domain ja adminpass syytä muuttaa omaan ympäristöön sopivaksi
 install_samba_addc:
   cmd.run:
     - name: sudo samba-tool domain provision --server-role=dc --use-rfc2307 --dns-backend=SAMBA_INTERNAL --realm=HUHTAKOTI.LAN --domain=HUHTAKOTI --adminpass=ErittainVahv4
     - unless:
-      - cat /etc/samba/smb.conf | grep ’rfc2307’
-      - cat /etc/krb5.conf | grep ’HUHTAKOTI.LAN’
-      - cat /etc/krb5.conf | grep ’huhtakoti.lan’
-
+      - cat /etc/samba/smb.conf | grep 'rfc2307'
+      - cat /etc/krb5.conf | grep 'HUHTAKOTI.LAN'
+      - cat /etc/krb5.conf | grep 'huhtakoti.lan'
 
 #Luodaan symbolinen linkki oikeaan krb5.conf tiedostoon
 /etc/krb5.conf:
@@ -311,7 +309,7 @@ reboot:
 ```
 Ajettiin komennolla:
 ```
-sudo salt ’dc1’ state.apply sambaaddc
+sudo salt 'dc1' state.apply sambaaddc
 ```
 
 toimi:
@@ -337,7 +335,9 @@ Haasteet:
 Pääasiassa haasteet ilmenivät manuaalisen asennuksen yhteydessä.
 Yhtenä haasteena oli saada resolv.conf-tiedoston automaattiset päivitykset pois. Ongelman ratkaisuna oli päivittää NetworkManager.conf-tiedostoa.
 Toinen ongelma oli saada asennettu ADDC-palvelu toimimaan kunnolla. Ratkaisuna oli poistaa system.resolved-palvelu pois käytöstä.
-Kolmantena ongelmana oli asettaa samba-käyttäjälle salasana automaattisesti. Ratkaisuna oli käyttää komentoa "yes", joka syöttää annettua merkkijonoa loputtomasti.
+Kolmantena ongelmana oli asettaa samba-käyttäjälle salasana automaattisesti. Ratkaisuna oli käyttää komentoa ``yes``, joka syöttää annettua merkkijonoa loputtomasti.
 Saltin puolelta haasteet liittyivät lähinnä syntaksivirheisiin, joiden ongelmat selvisivät perehtymällä saltin dokumentaatioon.
+
+Arvio projektiin kuluneesta ajasta: 30 tuntia (projektin aiheeseen perehtyminen, manuaaliset asennukset ja niiden yhteydessä tulleiden ongelmien ratkaisu, toteutus saltilla ja raportin kirjoittaminen)
 
 
