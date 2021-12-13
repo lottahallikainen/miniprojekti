@@ -1,4 +1,4 @@
-# miniprojekti
+# miniprojekti - Lotta Huhta
 Haaga-helian palvelinten hallinnan kurssin miniprojekti
 
 Projektin tarkoituksena on luoda sisäverkon käyttäjille tiedostojen jako palvelin, sekä windowsin active directory-toimintoja vastaava palvelin linux ymppäristöön,
