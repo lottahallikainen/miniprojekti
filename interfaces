@@ -1,0 +1,9 @@
+# Muuta vastaamaan omaa ympäristöäsi
+auto lo
+iface lo inet static 
+  address 10.0.2.6
+  netmask 255.255.255.0
+  gateway 10.0.2.1
+  dns-nameservers 198.18.11.129
+  dns-nameservers 127.0.0.1
+  dns-search huhtakoti.lan
