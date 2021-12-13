@@ -27,7 +27,7 @@ Vaatimukset:
 - Koneiden käyttämä palomuuri on UFW
 
 Kopioi tämän projektin tiedostot allaolevan mukaisesti master koneen /srv/salt/ hakemistoon:
-- /srv/salt/smb.conf
+- /srv/salt/samba/smb.conf
 - /srv/salt/samba/interfaces
 - /srv/salt/samba/resolv.conf
 - /srv/salt/samba/NetworkManager.conf
